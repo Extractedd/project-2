@@ -1,0 +1,257 @@
+//// Dymon Harris CST 112
+
+/// Globals 
+
+String title= " MidtermM2";
+String help= "Click to move white ball. \n 'r' key to reset, 'q to quit. \n 'w' to remove wall. \n 'p' to change color of table to pink.";
+String news= help;
+String author= "Dymon Harris";
+
+int r,g,b;
+float button1X=100, button1Y=40, button1W=80, button1H=40;
+float up, right, down, left;
+float center;
+float mright, mleft;
+
+float whiteX, whiteY, whiteDX, whiteDY;
+float blueX, blueY, blueDX, blueDY;
+float redX, redY, redDX, redDY;
+float orangeX, orangeY, orangeDX, orangeDY;
+float greenX, greenY, greenDX, greenDY;
+
+boolean wall=true;
+
+
+
+/// Values
+void setup() {
+  size( 700, 500 );
+  right= width-94;
+  left=  105;
+  up=  120;
+  down= height-80;
+  center= left + (right-left) / 2;
+  mleft= 370;
+  mright= 340;
+  
+  reset();
+}
+
+
+void reset() {
+  whiteX= left + (right-left) / 4;
+  whiteY= up + (down-up) / 2;
+  whiteDX= whiteDY=0;
+  mleft= 370;
+  mright= 340;
+  wall = true;
+  r= 0;
+  g= 150;
+  b= 100;
+  
+  blueX= random( center,right );  blueY= random( up, down );
+  redX= random( center,right );  redY= random( up, down );
+  orangeX= random( center,right );  orangeY=random( up, down );
+  greenX= random( center,right );  greenY= random( up, down );
+  
+  blueDX= random( 1,3 );  blueDY= random( 1,3 );
+  redDX= random ( 1,3 );  redDY= random( 1,3 );
+  orangeDX= random ( 1,3 );  orangeDY= random( 1,3 );
+  greenDX= random ( 1,3 );  greenDY= random( 1,3 );
+}
+
+//// NEXT FRAME:  table, bounce off walls, collisions, show all
+void draw() {
+  background ( 150,200,250 );
+  rectMode(CENTER);
+  table ( left, up, right, down );
+  bounce();
+  collisions();
+  show();
+  messages();
+   fill( 150,200,255 );
+  showButton( "Reset", button1X, button1Y, button1W, button1H );
+}
+
+
+//// SCENE:  draw the table with walls
+void table( float left, float up, float right, float down ) {
+  fill( r,g,b );
+  strokeWeight(15);
+  stroke( 200,200,200 );
+  rect( 355,270,545,345 );
+  stroke(0);
+  strokeWeight(8);
+
+
+    if (!wall) {
+    float center= left + (right-left) / 2;    
+    line( 0,0,0,0 );
+  }
+  
+    if (wall) {
+    float center= left + (right-left) / 2;    
+     line( 355,415,355,125 );
+  }
+}
+void showButton( String s, float x, float y, float w, float h ) {
+  rect ( x,y, w,h );
+  fill(0);
+  text( s, x-15, y+5 );
+}
+//// ACTION:  bounce off walls, collisions
+void bounce() {
+// Blue Ball Collision w. wall
+   blueX += blueDX;  if ( blueX<mleft || blueX>right ) blueDX *= -1;
+  blueY += blueDY;  if ( blueY<up || blueY>down ) blueDY *=  -1;
+//  Red Ball Collision w. wall
+  redX += redDX;  if ( redX<mleft || redX>right ) redDX *= -1;
+  redY += redDY;  if ( redY<up || redY>down ) redDY *=  -1;
+//  Orange Ball Collision w. wall
+  orangeX += orangeDX;  if ( orangeX<mleft || orangeX>right ) orangeDX *= -1;
+  orangeY += orangeDY;  if ( orangeY<up || orangeY>down ) orangeDY *=  -1;
+//  Green Ball Collision w. wall
+  greenX += greenDX;  if ( greenX<mleft || greenX>right ) greenDX *= -1;
+  greenY += greenDY;  if ( greenY<up || greenY>down ) greenDY *=  -1;
+//  White Ball Collision w. wall
+  whiteX += whiteDX;  if ( whiteX<left || whiteX>mright ) whiteDX *= -1;
+  whiteY += whiteDY;  if ( whiteY<up || whiteY>down ) whiteDY *=  -1;
+}
+
+
+
+/// Collisions between other balls
+void collisions() {
+  float right,left;
+  
+  if  (dist( blueX, blueY, redX, redY ) < 30 ) {
+    right=redDX;  redDX=blueDX;  blueDX=right;
+    left=redDY;  redDY=blueDY; blueDY=left;
+  }
+  
+  if (dist( blueX, blueY, orangeX, orangeY ) < 30 ) {
+    float orangeY=orangeDX;  orangeDX=blueDX; blueDX=orangeY;
+    float redY=orangeDY;  orangeDY=blueDY;  blueDY=redY;
+  }
+  
+  if (dist( blueX, blueY, greenX, greenY ) < 30 ) {
+    float greenY=greenDX;  greenDX=blueDX; blueDX=greenY;
+    float redY= greenDY;  greenDY= blueDY;  blueDY=redY;
+  }
+  
+  if  (dist( whiteX, whiteY, blueX, blueY ) < 30 ) {
+    right=blueDX;  blueDX=whiteDX;  whiteDX=right;
+    left=blueDY;  blueDY=whiteDY; whiteDY=left;
+  }
+  
+   if  (dist( whiteX, whiteY, redX, redY ) < 30 ) {
+    right=redDX;  redDX=whiteDX;  whiteDX=right;
+    left=redDY;  redDY=whiteDY; whiteDY=left;
+  }
+  
+   if  (dist( whiteX, whiteY, orangeX, orangeY ) < 30 ) {
+    right=orangeDX;  orangeDX=whiteDX;  whiteDX=right;
+    left=orangeDY;  orangeDY=whiteDY; whiteDY=left;
+  }
+  
+   if  (dist( whiteX, whiteY, greenX, greenY ) < 30 ) {
+    right=greenDX;  greenDX=whiteDX;  whiteDX=right;
+    left=greenDY;  greenDY=whiteDY; whiteDY=left;
+  }
+  
+    if  (dist( redX, redY, orangeX, orangeY ) < 30 ) {
+    right=orangeDX;  orangeDX=redDX;  redDX=right;
+    left=orangeDY;  orangeDY=redDY; redDY=left;
+  }
+  
+  if  (dist( redX, redY, greenX, greenY ) < 30 ) {
+    right=greenDX;  greenDX=redDX;  redDX=right;
+    left=greenDY;  greenDY=redDY; redDY=left;
+  }
+  
+  if  (dist( orangeX, orangeY, greenX, greenY ) < 30 ) {
+    right=greenDX;  greenDX=orangeDX;  orangeDX=right;
+    left=greenDY;  greenDY=orangeDY; orangeDY=left;
+  }
+}
+  
+ 
+  
+ /* 
+ float tmp,up,down,blueX=0;
+  if (dist( whiteX, whiteY, blueX, blueY ) < 60 ) {
+    up=blueDX;  blueDX=whiteDX;  whiteDX=up;
+    down=blueDY;  blueDY=whiteDY;  whiteDY=down;
+  }
+  
+  if (dist( whiteX, whiteY, redX, redY ) < 59 ) {
+    blueX=redDX;  redDX=whiteDX;  whiteDX=blueX;
+    blueX=redDY;  redDY=whiteDY;  whiteDY=blueX;
+  }
+  
+  if (dist( whiteX, whiteY, orangeX, orangeY ) < 61 ) {
+    tmp=orangeDX;  orangeDX=whiteDX;  whiteDX=tmp;
+    tmp=orangeDY;  orangeDY=whiteDY;  whiteDY=tmp;
+  }
+}
+*/
+
+
+
+//// SHOW:  balls, messages
+void show() {
+  strokeWeight(1);
+  fill( 0,0,200 );    ellipse( blueX,blueY, 30,30 );
+  fill( 150,0,0 );  ellipse( redX,redY, 30,30 );
+  fill( 225,100,0 );    ellipse( orangeX,orangeY, 30,30 );
+  fill( 255 );    ellipse( whiteX,whiteY, 30,30 );
+  fill(0,150,0);  ellipse( greenX,greenY, 30,30);
+
+}
+void messages() {
+  fill(0);
+  text( title, width/3, 20 );
+  text( news, width/3, 42 );
+  text( author, 10, height-11 );
+}
+
+
+//// HANDLERS:  keys, click
+void keyPressed() {
+  if (key == 'r') {
+    reset();
+  }
+  if (key == '+') { blueDX *=2; blueDY *=2; }
+  if (key == '-') { blueDX /=2; blueDY /=2; }
+  
+  if (key == 'p') { r= 255; g= 200; b= 230;}
+  if (key == 'w') { mleft = left; mright = right; wall = false; }
+  if (key == 'q') {
+    exit();
+  }
+}
+
+void mousePressed() {
+ float force=  dist( mouseX,mouseY, whiteX,whiteY ) / 20;
+ 
+  //
+  whiteDX=  (whiteX-mouseX) / 28.9;
+  whiteDY=  (whiteY-mouseY) / 31.2;
+  
+   if ( hit( mouseX,mouseY, button1X,button1Y, button1W,button1H ) ) {
+      reset();
+   
+}
+}
+
+boolean hit( float x1, float y1, float x2, float y2, float w, float h ) {
+  boolean result;
+
+  // +++++ STUB ALWAYS RETURNS TRUE!
+  if ( abs(x1-x2) < w && abs(y1-y2)<h ) {
+    result=  true;
+  } else {
+    result=false;
+  }
+  return result;
+}
